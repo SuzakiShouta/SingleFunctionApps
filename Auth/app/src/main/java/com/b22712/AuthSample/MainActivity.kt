@@ -1,33 +1,62 @@
 package com.b22712.AuthSample
 
+
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var authManager: AuthManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        authManager = AuthManager(this)
-        authManager.initializeGoogleSignIn()
 
-        val signInButton = findViewById<com.google.android.gms.common.SignInButton>(R.id.sign_in_button)
+    }
 
-        signInButton.setOnClickListener {
-            authManager.signInWithGoogle()
+    private val receiver = CallGetTokenReceiver()
+
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, IntentFilter("call_getToken"))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+    }
+
+    private inner class CallGetTokenReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            getToken()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.d("AuthLog","onActivityResult")
-        Log.d("AuthLog","requestCode = $requestCode")
-        Log.d("AuthLog","onActivityResult requestCode = $requestCode\nresultCode = $resultCode\ndata = $data")
-        if (requestCode == authManager.RC_GOOGLE_SIGN_IN) {
-            authManager.handleSignInResult(data)
+    fun getToken() {
+        val application = applicationContext as MainApplication
+        val oAuthFragment = OAuthFragment.newInstance()
+        // Fragmentを作る
+        supportFragmentManager.beginTransaction()
+            .add(R.id.OAuthFragmentContainerView, oAuthFragment)
+            .commit()
+        val tokenReceivedListener = object : OAuthFragment.OnTokenReceivedListener {
+            override fun onTokenReceived(token: String?) {
+                // コールバックでtokenをもらう
+                Log.d("MainActivity", "Token received: $token")
+                // applicationにtokenを渡す．
+                application.setToken(token)
+                // Fragmentを消す
+                supportFragmentManager.beginTransaction()
+                    .remove(oAuthFragment)
+                    .commit()
+            }
         }
+        oAuthFragment.setOnTokenReceivedListener(tokenReceivedListener as OAuthFragment.OnTokenReceivedListener)
     }
+
 }

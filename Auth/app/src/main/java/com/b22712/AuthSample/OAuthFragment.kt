@@ -1,59 +1,93 @@
 package com.b22712.AuthSample
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.auth.FirebaseAuth
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [OAuthFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class OAuthFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    companion object {
+        private const val RC_SIGN_IN = 123
+        private const val TAG = "OAuthFragment"
+        // 動的にFragmentを生成するためにインスタンスを返す関数をcompanion objectに書く
+        fun newInstance() = OAuthFragment()
     }
+
+    private lateinit var firebaseAuth: FirebaseAuth
+    private var listener: OnTokenReceivedListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_o_auth, container, false)
+        val view = inflater.inflate(R.layout.fragment_o_auth, container, false)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        val signInButton = view.findViewById<com.google.android.gms.common.SignInButton>(R.id.sign_in_button)
+        signInButton.setOnClickListener {
+            startSignInFlow()
+        }
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment OAuthFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            OAuthFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun startSignInFlow() {
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.GoogleBuilder().build(),
+        )
+
+        startActivityForResult(
+            AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build(),
+            RC_SIGN_IN
+        )
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val response = IdpResponse.fromResultIntent(data)
+            if (resultCode == Activity.RESULT_OK) {
+                val user = firebaseAuth.currentUser
+                Log.d(TAG, "Sign in success: ${user?.displayName}")
+
+                val token = user?.getIdToken(true)
+                    ?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val idToken = task.result?.token
+                            // トークンはここで確認します．
+                            Log.d(TAG, "Token: $idToken")
+                            // リスナにトークンを渡す
+                            listener?.onTokenReceived(idToken)
+                        } else {
+                            Log.e(TAG, "Failed to retrieve token")
+                        }
+                    }
+
+            } else {
+                // リクエスト失敗
+                Log.d(TAG, "Sign in failed: ${response?.error?.errorCode}")
+            }
+        }
+    }
+
+    // これを継承したクラスはonTokenReceivedをオーバーライドしてコールバックを受け取る
+    interface OnTokenReceivedListener {
+        fun onTokenReceived(token: String?)
+    }
+    fun setOnTokenReceivedListener(listener: OnTokenReceivedListener) {
+        this.listener = listener
+    }
+
 }
