@@ -9,9 +9,11 @@ Firebase Authenticationでトークンを取得するアプリです．
 ## MinioClient
 [minio](https://min.io)にファイルをPOSTするアプリです．
 
-minioとはAWSのS3をオンプレミスに運用するみたいにできるオブジェクトストレージです．
+minioとはAmazon S3クラウドストレージサービスとAPI互換を持つオブジェクトストレージです．
 
-多分minioを使用してAWSS3にもファイルを送信できると思います．
+Amazon S3のオンプレミス版です．
+
+minioを使用してAWSS3にもファイルを送信できると思います．
 
 ## Queue
 センシングをするアプリです．
