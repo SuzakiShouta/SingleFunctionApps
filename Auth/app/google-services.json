@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "687722612491",
+    "project_id": "lavlus",
+    "storage_bucket": "lavlus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687722612491:android:3f3f681aab436cb569040e",
+        "android_client_info": {
+          "package_name": "com.b22712.AuthSample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687722612491-v16c4n77jt8pi4c7bliq3nt8tepepr2r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrTule6ZS8-uehHfDW1obwRJvqufzYsOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687722612491-v16c4n77jt8pi4c7bliq3nt8tepepr2r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
