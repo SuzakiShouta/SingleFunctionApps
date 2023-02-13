@@ -1,0 +1,80 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.example.minio_client'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.minio_client"
+        minSdk 31
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    packagingOptions {
+        exclude 'javax/servlet/jsp/resources/jspxml.xsd'
+        exclude 'javax/servlet/jsp/resources/web-jsptaglibrary_2_0.xsd'
+        exclude 'javax/servlet/jsp/resources/web-jsptaglibrary_2_1.xsd'
+        exclude 'javax/servlet/http/LocalStrings_ja.properties'
+        exclude 'META-INF/mimetypes.default'
+        exclude 'javax/servlet/resources/web-app_2_4.xsd'
+        exclude 'javax/servlet/jsp/resources/web-jsptaglibrary_1_2.dtd'
+        exclude 'javax/servlet/resources/j2ee_web_services_client_1_1.xsd'
+        exclude 'javax/servlet/http/LocalStrings_fr.properties'
+        exclude 'javax/servlet/LocalStrings_ja.properties'
+        exclude 'javax/servlet/jsp/resources/web-jsptaglibrary_1_1.dtd'
+        exclude 'javax/servlet/http/LocalStrings_es.properties'
+        exclude 'javax/servlet/resources/xml.xsd'
+        exclude 'javax/servlet/http/LocalStrings.properties'
+        exclude 'javax/servlet/resources/XMLSchema.dtd'
+        exclude 'javax/servlet/resources/j2ee_web_services_1_1.xsd'
+        exclude 'javax/servlet/resources/web-app_2_2.dtd'
+        exclude 'javax/servlet/resources/j2ee_1_4.xsd'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'javax/servlet/resources/web-app_2_5.xsd'
+        exclude 'javax/el/LocalStrings.properties'
+        exclude 'javax/servlet/jsp/resources/jspxml.dtd'
+        exclude 'javax/servlet/resources/datatypes.dtd'
+        exclude 'javax/servlet/jsp/resources/jsp_2_0.xsd'
+        exclude 'javax/servlet/LocalStrings_fr.properties'
+        exclude 'javax/servlet/LocalStrings.properties'
+        exclude 'javax/servlet/jsp/resources/jsp_2_1.xsd'
+        exclude 'javax/servlet/resources/web-app_2_3.dtd'
+
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'io.minio:minio:8.5.1'
+    implementation group: 'org.apache.openejb', name: 'javaee-api', version: '6.0-1'
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.0'
+
+
+}
