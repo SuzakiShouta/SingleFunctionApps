@@ -9,28 +9,42 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.PrintWriter
 
-class OtherFileStorage(context: Context, name: String, queue: Queue) {
+// contextとFileの名前と対象のQueueが必要．
+// センサクラス１つにつき１つ
+class OtherFileStorage(private val context: Context, name: String, private val queue: ArrayDeque<String>) {
 
-    val fileAppend : Boolean = true //true=追記, false=上書き
-    val context: Context = context
+    //true=追記, false=上書き
+    val fileAppend : Boolean = true
+
+    // 全てのfileの前につける名前（自由）
     val fileNameBace : String = "queue-"
     var fileName: String = fileNameBace.plus(name)
+
+    // 拡張子
     val extension : String = ".csv"
-    val filePath: String = context.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString().plus("/").plus(fileName).plus(extension) //内部ストレージのDocumentのURL
-    val queue = queue
+
+    //内部ストレージのDocumentのURL
+    val filePath: String = "${context.applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/${fileName}${extension}"
+
+    // Queueのデータをファイルに保存する周期
+    val delayMillis: Long = 1000L
+
     // Handler のオブジェクトを生成
     val handler = Handler(Looper.getMainLooper())
     val runnable = object: Runnable {
         override fun run() {
-
-            Log.d("Queue_queuesize",queue.pressureQueue.size.toString())
-            val pressureCopy = queue.pressureQueue.toArray()
-            queue.pressureQueue.clear()
+            // 1:コピー作成
+            val pressureCopy = queue.toArray()
+            // 2:本体をクリア
+            queue.clear()
+            // 3:コピーをファイルに書き込む
             saveArrayDeque(pressureCopy)
-            handler.postDelayed(this, 1000)
+            // 指定時間毎に繰り返す
+            handler.postDelayed(this, delayMillis)
         }
     }
 
+    // 一行書き込むやつ．今回は使わない．
     fun writeText(text:String){
         val fil = FileWriter(filePath,fileAppend)
         val pw = PrintWriter(BufferedWriter(fil))
