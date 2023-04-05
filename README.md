@@ -3,8 +3,19 @@
 
 ## Auth
 Firebase Authenticationでトークンを取得するアプリです．
+
 [ログインが必要になったらFirebase Authenticationでトークンを取るフラグメント出す for Android](https://zenn.dev/log_suzaki/articles/25086cfefbadd8)
+
+## MinioClient
+[minio](https://min.io)にファイルをPOSTするアプリです．
+
+minioとはAmazon S3クラウドストレージサービスとAPI互換を持つオブジェクトストレージです．
+
+Amazon S3のオンプレミス版です．
+
+minioを使用してAWSS3にもファイルを送信できると思います．
 
 ## Queue
 センシングをするアプリです．
+
 取得したセンサの値をQueueに格納し，一定間隔ごとにQueueの中身を外部ストレージに保存します．
