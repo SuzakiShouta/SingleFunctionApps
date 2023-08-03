@@ -23,8 +23,10 @@ class MainActivity : AppCompatActivity() {
 
         val db = Firebase.firestore
 
+        // POST
         button1.setOnClickListener {
 
+            // POSTするデータ
             val breadcrumb: Breadcrumb = Breadcrumb(
                 "abcdefg",
                 Location(35.1, 135.0),
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
                 LocalDateTime.now().toString()
             )
 
+            // POST
             db.collection("breadcrumb")
                 .add(breadcrumb)
                 .addOnSuccessListener { documentReference ->
@@ -46,12 +49,31 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
+        // Get
         button2.setOnClickListener {
             db.collection("breadcrumb")
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
                         Log.d("MainActivity", "${document.id} => ${document.data}")
+
+                        // java.lang.String
+                        Log.d("check", "userId = ${document.data["userId"]} : ${document.data["userId"]?.javaClass?.name}")
+
+                        // java.util.HashMap
+                        Log.d("check", "location = ${document.data["location"]} : ${document.data["location"]?.javaClass?.name}")
+
+                        // java.lang.String
+                        Log.d("check", "profile = ${document.data["profile"]} : ${document.data["profile"]?.javaClass?.name}")
+
+                        // java.util.ArrayList
+                        Log.d("check", "snsProfiles = ${document.data["snsProfiles"]} : ${document.data["snsProfiles"]?.javaClass?.name}")
+                        val snsProfiles: ArrayList<Any?>? = document.data?.get("snsProfiles") as ArrayList<Any?>?
+                        Log.d("check", "snsProfiles[0] = ${snsProfiles?.get(0)} : ${snsProfiles?.get(0)?.javaClass?.name}")
+
+                        // java.lang.String
+                        Log.d("check", "createdAt = ${document.data["createdAt"]} : ${document.data["createdAt"]?.javaClass?.name}")
+
                     }
                 }
                 .addOnFailureListener { exception ->
