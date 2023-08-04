@@ -55,4 +55,8 @@ class Speech(context: Context): TextToSpeech.OnInitListener{
         tts?.speak(text,TextToSpeech.QUEUE_FLUSH,null,"ID")
     }
 
+    fun stop(){
+        tts?.stop()
+    }
+
 }
