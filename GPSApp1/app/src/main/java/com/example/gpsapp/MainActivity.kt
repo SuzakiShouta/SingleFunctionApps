@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         locationSensor.requestLocationPermission(this)
         locationSensor.fusedLocation()
 
+        // LiveDataの値が変化をobserverが監視、プログラムを実行する
         locationSensor.location.observe(this, Observer {
             textView.text = "${it.latitude}\n, ${it.longitude}"
         })

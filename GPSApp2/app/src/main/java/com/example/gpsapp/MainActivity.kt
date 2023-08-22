@@ -8,31 +8,41 @@ import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var textViewLat: TextView
-    lateinit var textViewLong: TextView
-    lateinit var button: Button
+    lateinit var textView: TextView
+    lateinit var startButton: Button
+    lateinit var stopButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        textViewLat = findViewById(R.id.textview_lat)
-        textViewLong = findViewById(R.id.textView_long)
-        button = findViewById(R.id.button)
+        textView = findViewById(R.id.textview)
+        startButton = findViewById(R.id.button_start)
+        stopButton = findViewById(R.id.button_stop)
 
         val locationSensor = LocationSensor(this)
         locationSensor.requestLocationPermission()
-        locationSensor.start()
 
-        locationSensor.lat.observe(this, Observer {
-            textViewLat.text = "$it"
-        })
-        locationSensor.long.observe(this, Observer {
-            textViewLong.text = "$it"
+        stopButton.isEnabled = false
+
+        locationSensor.location.observe(this, Observer {
+            textView.text = "lat = ${it.latitude}\n long = ${it.longitude}"
         })
 
-        button.setOnClickListener {
-            locationSensor.stop()
+        startButton.setOnClickListener {
+            if (!locationSensor.run) {
+                locationSensor.start()
+                startButton.isEnabled = false
+                stopButton.isEnabled = true
+            }
+        }
+
+        stopButton.setOnClickListener {
+            if (locationSensor.run) {
+                locationSensor.stop()
+                startButton.isEnabled = true
+                stopButton.isEnabled = false
+            }
         }
 
     }

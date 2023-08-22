@@ -4,10 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationRequest
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
@@ -17,12 +14,14 @@ import com.google.android.gms.location.LocationServices
 
 class LocationSensor(val activity: MainActivity) {
 
+    // 位置情報が更新されたらこのLiveDataに格納する
     private val _location: MutableLiveData<Location> = MutableLiveData<Location>()
     val location: LiveData<Location> = _location
 
     fun requestLocationPermission(activity: Activity) {
         val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
+        // 位置情報の権限があるか確認する
         val isAccept = ContextCompat.checkSelfPermission(
             activity,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -43,6 +42,8 @@ class LocationSensor(val activity: MainActivity) {
         // 最後に確認された位置情報を取得
         val fusedLocationClient: FusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(activity)
+
+        // 一応権限のチェック
         if (ActivityCompat.checkSelfPermission(
                 activity,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -57,16 +58,11 @@ class LocationSensor(val activity: MainActivity) {
             return
         }
 
+        // 位置情報を取得したらListenerが反応する
         fusedLocationClient.lastLocation
             .addOnSuccessListener(activity) { location ->
                 Log.d("LocationSensor","$location")
                 if (location != null) {
-                    // Logic to handle location object
-                    // 緯度の表示
-                    val str1 = "Latitude:" + location.latitude
-
-                    // 経度の表示
-                    val str2 = "Longitude:" + location.longitude
                     _location.postValue(location)
                 }
             }

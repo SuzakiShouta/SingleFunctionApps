@@ -4,7 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,11 +19,10 @@ class LocationSensor(private val activity: Activity) {
 
     private var locationCallback: LocationCallback? = null
 
-    private val _lat: MutableLiveData<Double> = MutableLiveData()
-    val lat: LiveData<Double> = _lat
+    private val _location: MutableLiveData<Location> = MutableLiveData()
+    val location: LiveData<Location> = _location
 
-    private val _long: MutableLiveData<Double> = MutableLiveData()
-    val long: LiveData<Double> = _long
+    var run: Boolean = false
 
     @SuppressLint("MissingPermission")
     fun start() {
@@ -33,8 +34,8 @@ class LocationSensor(private val activity: Activity) {
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     for (location in locationResult.locations) {
-                        _lat.postValue(location.latitude)
-                        _long.postValue(location.longitude)
+                        Log.d("LocationSensor", "lat = ${location.latitude}\n long = ${location.longitude}")
+                        _location.postValue(Location(location))
                     }
                 }
             }
@@ -45,6 +46,7 @@ class LocationSensor(private val activity: Activity) {
                 Looper.getMainLooper()
             )
         }
+        run = true
     }
 
     fun requestLocationPermission() {
@@ -60,6 +62,7 @@ class LocationSensor(private val activity: Activity) {
             fusedLocationClient.removeLocationUpdates(it)
             locationCallback = null
         }
+        run = false
     }
 
     private fun checkLocationPermission(): Boolean {
