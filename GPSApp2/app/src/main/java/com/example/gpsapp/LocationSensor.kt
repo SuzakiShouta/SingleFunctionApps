@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,15 +26,14 @@ class LocationSensor(private val activity: Activity) {
     @SuppressLint("MissingPermission")
     fun start() {
         if (checkLocationPermission()) {
-            val locationRequest: LocationRequest.Builder = LocationRequest.Builder(1000)
-            locationRequest.setMinUpdateDistanceMeters(10.0f)
-            locationRequest.build()
+            val locationRequest: LocationRequest.Builder =
+                LocationRequest.Builder(1000)
+                    .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
 
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     for (location in locationResult.locations) {
-                        Log.d("LocationSensor", "lat = ${location.latitude}\n long = ${location.longitude}")
-                        _location.postValue(Location(location))
+                        _location.postValue(location)
                     }
                 }
             }
@@ -45,6 +43,7 @@ class LocationSensor(private val activity: Activity) {
                 locationCallback as LocationCallback,
                 Looper.getMainLooper()
             )
+
         }
         run = true
     }
